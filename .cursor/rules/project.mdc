@@ -1,0 +1,24 @@
+---
+description: General rules for working on this project
+globs: 
+alwaysApply: false
+---
+# Project rules
+
+## Project metadata
+
+Name: <<<<<<>>>>>>
+Manufacturer: Neosperience Health Spa
+
+## Project description
+
+The project is about...
+
+## Rules for this project
+
+- do not include raw strings in ts/tsx files; use the translation libraries; add translations to messages/en.json and messages/it.json
+- code should be modular and reusable, avoid duplicating too much code
+- do not create duplicate files, make sure to check for existing files before creating new ones with the same scope
+- we're using preferably openai apis via the npm 'ai' package and @vercel/sdk. OpenAI model is gpt-4o or gpt-4o-mini; do not use other models
+- we're using pnpm as package manager
+

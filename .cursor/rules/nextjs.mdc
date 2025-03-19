@@ -1,0 +1,49 @@
+---
+description: Use these rules when writing typescript and css files for both frontend and backend
+globs: 
+alwaysApply: false
+---
+# Guidelines for Next.js projects
+
+## React rules
+
+- do not create APIs, use server components and server actions instead
+- do not fetch data in client components: fetch in server components and pass to client components if needed
+- avoid hooks unless strictly necessary
+- add loading skeletons for pages (add loading.tsx) matching the page structure
+- add 'use client' directive when required (e.g, components has event handlers or hooks) 
+- add 'use server' directive for server actions only
+- avoid using inline server actions, prefer having an actions.ts file colocated with the server component
+- use 'import "server-only";' for code using server-only secret keys (e.g, database, OpenAI)
+
+## i18n
+
+- translations are managed using the next-intl package
+- do not include raw strings in ts/tsx files but use the translation
+- always add translations to client/messages/en.json and client/messages/it.json
+- we support by default en and it, unless specified otherwise in project rules
+
+## UI
+
+- dark mode is not needed
+- use shadcn components
+- use this command to install @shadcn components: pnpm dlx shadcn@latest add <component>
+- when adding buttons, mr-2/ml-2 is not needed to separate text and icon since it has been recently added to shadcn template
+- when importing icons, import the *Icon variant (to avoid confusion with other component imports)
+
+## Next 15 specific rules
+
+- we're using Next.js 15 with App Router
+- use next/navigation, do not import next/router
+- pages are in the app/ folder
+- searchParams prop in pages are now a Promise, you need to await searchParams and add a loading.tsx or wrap the page in a suspense boundary
+- use server components, then fallback to client components if interactivity is needed
+- use server actions for form submissions
+- in package.json, dev command is "next dev --experimental-https"
+
+## Forbidden to...
+
+- never use themes
+- do not use themes
+- avoid adding providers
+

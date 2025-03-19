@@ -1,0 +1,92 @@
+---
+description: Use this rule when setting up next-intl
+globs: 
+alwaysApply: false
+---
+
+# Rules for next-intl
+
+Documentation is here: https://next-intl.dev/docs/getting-started/app-router/without-i18n-routing
+
+This is the only way to configure i18n. Do not make other changes to files and project structure. Do not add an i18n key to next.config.ts.
+
+We're using "App Router without i18n routing", the app supports locales based on user preferences.
+
+next.config.ts
+
+```ts
+import createNextIntlPlugin from 'next-intl/plugin';
+ 
+const withNextIntl = createNextIntlPlugin();
+ 
+const nextConfig: NextConfig = {};
+ 
+export default withNextIntl(nextConfig);
+```
+
+i18n/request.ts
+
+```ts
+import {getRequestConfig} from 'next-intl/server';
+ 
+export default getRequestConfig(async () => {
+  // Provide a static locale, fetch a user setting,
+  // read from `cookies()`, `headers()`, etc.
+  const locale = 'en';
+ 
+  return {
+    locale,
+    messages: (await import(`../../messages/${locale}.json`)).default
+  };
+});
+```
+
+app/layout.tsx
+
+```ts
+import {NextIntlClientProvider} from 'next-intl';
+import {getLocale, getMessages} from 'next-intl/server';
+ 
+export default async function RootLayout({
+  children
+}: {
+  children: React.ReactNode;
+}) {
+  const locale = await getLocale();
+ 
+  // Providing all messages to the client
+  // side is the easiest way to get started
+  const messages = await getMessages();
+ 
+  return (
+    <html lang={locale}>
+      <body>
+        <NextIntlClientProvider messages={messages}>
+          {children}
+        </NextIntlClientProvider>
+      </body>
+    </html>
+  );
+}
+```
+
+client component:
+
+```ts
+import {useTranslations} from 'next-intl';
+ 
+export default function HomePage() {
+  const t = useTranslations('HomePage');
+  return <h1>{t('title')}</h1>;
+}
+```
+
+server component:
+
+```
+import {getTranslations} from 'next-intl/server';
+ 
+export default function HomePage() {
+  const t = getTranslations('HomePage');
+  return <h1>{t('title')}</h1>;
+}

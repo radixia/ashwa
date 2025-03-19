@@ -1,0 +1,123 @@
+---
+description: This rule defines privacy and security requirement and gives guidelines for Clerk implementation
+globs: 
+alwaysApply: false
+---
+# Security and privacy
+
+These rules include samples on how to configure Clerk. Strictly follow the rules and the examples.
+
+## User management
+
+- User management, Authentication, and Authorization is managed via Clerk
+- Implement Clerk following Quickstart (https://clerk.com/docs/quickstarts/nextjs)
+- Use Clerk API Reference (https://clerk.com/docs/reference/frontend-api, https://clerk.com/docs/reference/backend-api)
+- User Roles are maintained as a custom claim in the ckerl session token, under a roles[] prop (type Roles = ("admin")[])
+
+### Example Clerk usage
+
+middleware.ts
+
+```ts
+import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
+
+const isProtectedRoute = createRouteMatcher(['/(.*)'])
+
+export default clerkMiddleware(async (auth, req) => {
+  if (isProtectedRoute(req)) await auth.protect()
+})
+
+export const config = {
+  matcher: [
+    // Skip Next.js internals and all static files, unless found in search params
+    '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
+    // Always run for API routes
+    '/(api|trpc)(.*)',
+  ],
+}
+```
+
+Reading user data in server components and server actions:
+
+```ts
+import { auth, currentUser } from '@clerk/nextjs/server'
+
+export default async function Page() {
+  // Get the userId from auth() -- if null, the user is not signed in
+  const { userId } = await auth()
+
+  // Protect the route by checking if the user is signed in
+  if (!userId) {
+    return <div>Sign in to view this page</div>
+  }
+
+  // Get the Backend API User object when you need access to the user's information
+  const user = await currentUser()
+
+  // Use `user` to render user details or create UI elements
+  return <div>Welcome, {user.firstName}!</div>
+}
+```
+
+Reading session data in client components:
+
+```ts
+export default function Example() {
+  const { isLoaded, isSignedIn, userId, sessionId, getToken } = useAuth()
+
+  if (!isLoaded) {
+    return <div>Loading...</div>
+  }
+
+  if (!isSignedIn) {
+    // You could also add a redirect to the sign-in page here
+    return <div>Sign in to view this page</div>
+  }
+
+  return (
+    <div>
+      Hello, {userId}! Your current active session is {sessionId}.
+    </div>
+  )
+}
+```
+
+Reading user data in client components:
+
+```ts
+export default function Example() {
+  const { isSignedIn, user, isLoaded } = useUser()
+
+  if (!isLoaded) {
+    return <div>Loading...</div>
+  }
+
+  if (!isSignedIn) {
+    return <div>Sign in to view this page</div>
+  }
+
+  return <div>Hello {user.firstName}!</div>
+}
+```
+
+Further documentation is here: https://clerk.com/docs/references/nextjs/overview
+
+
+## Security
+
+- ISO 27001 compliance is required
+- Add appropriate security headers following current best practices
+- Keep CSP policy updated
+- Validate user input via zod and use sanitized input
+- Make security-conscious choices
+- Always review the security posture of any backend/infrastructure change you make
+- Admin operations must be logged
+
+## Privacy
+
+- GDPR compliance is required
+- Data should be stored within the EU
+- Sensitive data should be encrypted
+- All routes should be protected
+- RBAC should be implemented (E.g, admin role is required to view admin pages)
+

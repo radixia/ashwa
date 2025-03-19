@@ -1,0 +1,15 @@
+---
+description: Use this rule when working on Typescript files
+globs: *.ts, *.tsx
+alwaysApply: false
+---
+# Guidelines for Typescript projects
+
+## Typescript Rules
+
+- always use typed code
+- do not use "any"
+- do not use "import type" as it's not necessary
+- create and update types when necessary
+- import existing types and type packages if existing (avoid creating types if the library exports them)
+- create and update zod validations when appropriate

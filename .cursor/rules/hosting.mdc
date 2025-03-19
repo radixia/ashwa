@@ -1,0 +1,45 @@
+---
+description: Use this rule when you need use AWS resources from Vercel (default deployment)
+globs: 
+alwaysApply: false
+---
+# Hosting rules
+
+- This project is hosted on Vercel
+- Database is Amazon DynamoDB
+- Storage is Amazon S3
+- Encryption is via AWS KMS
+- AWS infrastructure management is done via AWS CDK
+- AWS Credentials are loaded via Vercel Credentials Helper (We configured OIDC federation)
+
+## Using AWS Credentials Helper
+
+Example:
+
+```ts
+import * as S3 from '@aws-sdk/client-s3';
+import { awsCredentialsProvider } from '@vercel/functions/oidc';
+ 
+const AWS_REGION = process.env.AWS_REGION!;
+const AWS_ROLE_ARN = process.env.AWS_ROLE_ARN!;
+const S3_BUCKET_NAME = process.env.S3_BUCKET_NAME!;
+ 
+// Initialize the S3 Client
+const s3client = new S3.S3Client({
+  region: AWS_REGION,
+  // Use the Vercel AWS SDK credentials provider if we are on vercel
+  ...(AWS_ROLE_ARN ? 
+  { credentials: awsCredentialsProvider({
+    roleArn: AWS_ROLE_ARN,
+  })} : {})
+});
+ 
+export async function GET() {
+  const result = await s3client.send(
+    new S3.ListObjectsV2Command({
+      Bucket: S3_BUCKET_NAME,
+    }),
+  );
+  return result?.Contents?.map((object) => object.Key) ?? [];
+}
+```

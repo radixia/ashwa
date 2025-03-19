@@ -1,0 +1,22 @@
+# Build outputs
+.next
+out
+build
+dist
+
+# Package manager directories
+node_modules
+pnpm-lock.yaml
+
+# Coverage directories
+coverage
+
+# Generated files
+*.generated.*
+next-env.d.ts
+
+# Public assets
+public
+
+# Markdown files
+*.md 

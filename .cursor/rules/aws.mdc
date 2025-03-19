@@ -1,0 +1,47 @@
+---
+description: Use this rule when you need to work on AWS infrastructure 
+globs: 
+alwaysApply: false
+---
+# Overview
+
+- we are using AWS
+- all the infrastructure is on AWS, except the functions which are provided by Vercel
+- use AWS CDK to create resources
+- the CDK app is under infrastructure/
+- resources with static names should be marked with a deletion policy = retain on update
+
+# Key rules
+
+## Naming
+
+- When naming resources, prefer static naming
+- Append prod/stage/dev based on resource specification
+
+## Services
+
+- Prefer serverless services such as DynamoDB
+- Never provision capacity
+
+## Database
+
+- Use DynamoDB Single-table Design
+- Ensure TTLs are used so we don't store data indefinetly
+- Make sure deletionProtection is turned on
+- Make sure PITR is turned on
+
+## Storage
+
+- In S3, create lifecycle policies for all objects
+- Ensure buckets are encrypted
+- Make sure versioning is enforced
+
+## Permissions
+
+- Strictly adhere to the minimum permissions principle
+
+## Backups
+
+- Configure a backup vault
+- Configure appropriate backup plans for buckets and databases
+
