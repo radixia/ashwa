@@ -1,12 +1,12 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Plus } from "lucide-react"
-import { z } from "zod"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
+import { useState } from "react";
+import { Plus } from "lucide-react";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -15,11 +15,24 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+} from "@/components/ui/dialog";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const formSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -27,14 +40,14 @@ const formSchema = z.object({
   description: z.string().optional(),
   category: z.string().min(1, "Category is required"),
   previewImage: z.string().url("Please enter a valid URL").optional(),
-})
+});
 
 interface AddBookmarkDialogProps {
-  onAdd?: (bookmark: z.infer<typeof formSchema>) => void
+  onAdd?: (bookmark: z.infer<typeof formSchema>) => void;
 }
 
 export function AddBookmarkDialog({ onAdd }: AddBookmarkDialogProps) {
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -45,16 +58,16 @@ export function AddBookmarkDialog({ onAdd }: AddBookmarkDialogProps) {
       category: "",
       previewImage: "",
     },
-  })
+  });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     // In a real app, you would save this to a database
-    console.log(values)
+    console.log(values);
     if (onAdd) {
-      onAdd(values)
+      onAdd(values);
     }
-    form.reset()
-    setOpen(false)
+    form.reset();
+    setOpen(false);
   }
 
   return (
@@ -105,7 +118,11 @@ export function AddBookmarkDialog({ onAdd }: AddBookmarkDialogProps) {
                 <FormItem>
                   <FormLabel>Description</FormLabel>
                   <FormControl>
-                    <Textarea placeholder="Brief description of the website" {...field} value={field.value || ""} />
+                    <Textarea
+                      placeholder="Brief description of the website"
+                      {...field}
+                      value={field.value || ""}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -118,7 +135,11 @@ export function AddBookmarkDialog({ onAdd }: AddBookmarkDialogProps) {
                 <FormItem>
                   <FormLabel>Preview Image URL (optional)</FormLabel>
                   <FormControl>
-                    <Input placeholder="https://example.com/image.jpg" {...field} value={field.value || ""} />
+                    <Input
+                      placeholder="https://example.com/image.jpg"
+                      {...field}
+                      value={field.value || ""}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -158,6 +179,5 @@ export function AddBookmarkDialog({ onAdd }: AddBookmarkDialogProps) {
         </Form>
       </DialogContent>
     </Dialog>
-  )
+  );
 }
-
