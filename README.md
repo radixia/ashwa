@@ -1,6 +1,6 @@
 # Ashwa
 
-![Ashwa](./images/ashwagandha.png)
+![Ashwa](./images/ashwagandha.jpg)
 
 A modern web application built with Next.js 15 and React 19 for managing and organizing bookmarks.
 
