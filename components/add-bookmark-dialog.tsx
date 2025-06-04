@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Plus } from "lucide-react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -42,6 +42,17 @@ const formSchema = z.object({
   previewImage: z.string().url("Please enter a valid URL").optional(),
 });
 
+// Very small heuristic to guess a category based on the url hostname
+// This helps implementing the "Smart Organization" feature from the specs
+const categoryLookup: Record<string, string> = {
+  vercel: "Development",
+  github: "Development",
+  stackoverflow: "Reference",
+  "developer.mozilla": "Reference",
+  figma: "Design",
+  tailwindcss: "Design",
+};
+
 interface AddBookmarkDialogProps {
   onAdd?: (bookmark: z.infer<typeof formSchema>) => void;
 }
@@ -59,6 +70,28 @@ export function AddBookmarkDialog({ onAdd }: AddBookmarkDialogProps) {
       previewImage: "",
     },
   });
+
+  // Watch URL field to automatically suggest a category and preview image
+  const urlValue = form.watch("url");
+  const categoryValue = form.watch("category");
+
+  useEffect(() => {
+    if (!urlValue) return;
+    try {
+      const hostname = new URL(urlValue).hostname;
+      const key = Object.keys(categoryLookup).find((d) => hostname.includes(d));
+      if (key && !categoryValue) {
+        form.setValue("category", categoryLookup[key]);
+      }
+
+      const preview = `https://image.thum.io/get/${encodeURIComponent(urlValue)}`;
+      if (!form.getValues("previewImage")) {
+        form.setValue("previewImage", preview);
+      }
+    } catch {
+      // ignore URL parsing errors
+    }
+  }, [urlValue, categoryValue, form]);
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     // In a real app, you would save this to a database
